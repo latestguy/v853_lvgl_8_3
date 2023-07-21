@@ -8,6 +8,18 @@ CFLAGS ?= -O3 -g0 -I$(LVGL_DIR)/ -Wall -Wshadow -Wundef -Wmissing-prototypes -Wn
 LDFLAGS ?= -lm
 BIN = demo
 
+CFLAGS += -I$(SYSROOT_DIR)/usr/include
+CFLAGS += -DUSE_SUNXIFB_DOUBLE_BUFFER=1
+CFLAGS += -DUSE_SUNXIFB_CACHE=1
+CFLAGS += -DUSE_SUNXIFB_G2D=1
+CFLAGS += -DUSE_SUNXIFB_G2D_ROTATE=1
+CFLAGS += -DLV_USE_SUNXIFB_G2D_FILL=1
+CFLAGS += -DLV_USE_SUNXIFB_G2D_BLIT=1
+CFLAGS += -DLV_USE_SUNXIFB_G2D_BLEND=1
+CFLAGS += -DLV_USE_SUNXIFB_G2D_SCALE=1
+
+LDFLAGS += -L$(SYSROOT_DIR)/usr/lib -lavformat -lavcodec -lavutil -lswscale -lswresample -lz -lpthread -luapi
+
 prefix ?= /usr
 bindir ?= $(prefix)/bin
 

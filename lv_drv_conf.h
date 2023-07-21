@@ -316,12 +316,23 @@
  *  Linux frame buffer device (/dev/fbx)
  *-----------------------------------------*/
 #ifndef USE_FBDEV
-#  define USE_FBDEV           1
+#  define USE_FBDEV           0
 #endif
 
 #if USE_FBDEV
 #  define FBDEV_PATH              "/dev/fb0"
 #  define FBDEV_DISPLAY_POWER_ON  1 /* 1 to force display power during initialization */
+#endif
+
+/*-----------------------------------------
+ *  Sunxi frame buffer device (/dev/fbx)
+ *.........................................*/
+#ifndef USE_SUNXIFB
+#  define USE_SUNXIFB           1
+#endif
+
+#if USE_SUNXIFB
+#  define SUNXIFB_PATH          "/dev/fb0"
 #endif
 
 /*-----------------------------------------

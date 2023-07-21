@@ -1,4 +1,5 @@
 #include "lvgl/lvgl.h"
+#include "lv_drivers/display/sunxifb.h"
 #include "lvgl/demos/lv_demos.h"
 #include "lv_drivers/display/fbdev.h"
 #include "lv_drivers/indev/evdev.h"
@@ -6,6 +7,8 @@
 #include <pthread.h>
 #include <time.h>
 #include <sys/time.h>
+#include <lvgl_learning.h>
+#include <stdio.h>
 
 #define DISP_BUF_SIZE (128 * 1024)
 
@@ -14,23 +17,41 @@ int main(void)
     /*LittlevGL init*/
     lv_init();
 
+    uint32_t rotated = LV_DISP_ROT_NONE;
+
     /*Linux frame buffer device init*/
-    fbdev_init();
+    // fbdev_init();
+    sunxifb_init(rotated);
 
     /*A small buffer for LittlevGL to draw the screen's content*/
-    static lv_color_t buf[DISP_BUF_SIZE];
+    static uint32_t width, height;
+    sunxifb_get_sizes(&width, &height);
+
+    static lv_color_t *buf;
+    buf = (lv_color_t*) sunxifb_alloc(width * height * sizeof(lv_color_t), "lv_examples");
+    if (buf == NULL) {
+        sunxifb_exit();
+        printf("malloc draw buffer fail\n");
+        return 0;
+    }
 
     /*Initialize a descriptor for the buffer*/
     static lv_disp_draw_buf_t disp_buf;
-    lv_disp_draw_buf_init(&disp_buf, buf, NULL, DISP_BUF_SIZE);
+    lv_disp_draw_buf_init(&disp_buf, buf, NULL, width * height);
 
     /*Initialize and register a display driver*/
     static lv_disp_drv_t disp_drv;
     lv_disp_drv_init(&disp_drv);
     disp_drv.draw_buf   = &disp_buf;
-    disp_drv.flush_cb   = fbdev_flush;
+    disp_drv.flush_cb   = sunxifb_flush;
     disp_drv.hor_res    = 480;
     disp_drv.ver_res    = 800;
+    disp_drv.rotated    = rotated;
+    // disp_drv.full_refresh = 1;
+#ifndef USE_SUNXIFB_G2D_ROTATE
+    if (rotated != LV_DISP_ROT_NONE)
+        disp_drv.sw_rotate = 1;
+#endif
     lv_disp_drv_register(&disp_drv);
 
     evdev_init();
