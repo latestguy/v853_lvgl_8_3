@@ -7,5 +7,5 @@
 	url = https://github.com/lvgl/lv_demos.git
 [submodule "lv_drivers"]
 	path = lv_drivers
-	url = https://github.com/lvgl/lv_drivers.git
+	url = git@github.com:latestguy/lv_drivers.git
 	branch = release/v8.3
